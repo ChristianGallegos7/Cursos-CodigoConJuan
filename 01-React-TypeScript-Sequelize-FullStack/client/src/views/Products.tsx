@@ -1,6 +1,17 @@
+import { Link } from "react-router-dom"
 
 export const Products = () => {
-  return (
-    <div>Products</div>
-  )
+  return(
+    <>
+        <div className="flex justify-between">
+            <h2 className="text-4xl font-black text-slate-500">Productos</h2>
+            <Link 
+                to="productos/nuevo"
+                className="rounded-md bg-indigo-600 p-4 text.sm font-bold text-white shadow-sm hover:bg-indigo-700"
+                >
+                Agregar Productos
+            </Link>
+        </div>
+    </>
+)
 }
