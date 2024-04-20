@@ -1,5 +1,5 @@
 import { safeParse } from "valibot";
-import { DraftProductSchema } from "../types"
+import { DraftProductSchema, ProductsSchema } from "../types"
 import axios from "axios";
 
 type ProductData = {
@@ -16,15 +16,29 @@ export const addProduct =  async(data:ProductData) => {
         if(result.success){
             //Enviar la data al backend, usamos la variable de entorno en vite
             const url = `${import.meta.env.VITE_API_URL}/api/products`
-            const {data} = await axios.post(url,{
+            await axios.post(url,{
                 name: result.output.name,
                 price: result.output.price
             })
-            console.log(data)
         }else{
             throw new Error('Datos no válidos')
         }
     } catch (error) {
         console.log(error)
+    }
+}
+
+export const getProducts = async() => {
+    try {
+        const url = `${import.meta.env.VITE_API_URL}/api/products`
+        const {data} = await axios.get(url)
+        const result = safeParse(ProductsSchema, data.data)
+        if(result){
+            return result.output
+        }else{
+            throw new Error('Hubo un error')
+        }
+    } catch (error) {
+        console.error(error)
     }
 }
