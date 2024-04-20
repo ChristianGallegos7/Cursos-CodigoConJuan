@@ -1,4 +1,9 @@
-import { Link, Form } from "react-router-dom";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { Link, Form, useActionData, ActionFunctionArgs } from "react-router-dom";
+import { addProduct } from "../services/ProductService";
+
+
+
 /*
 en react router dom en la version 6.22.3 esta la etiqueta Form nos permite manejar el formulario y conta de 3 pasos
 cambiar la etiqueta form html por la etiqueta Form que importamos desde react-router-dom, desde el archivo donde se encuentre
@@ -26,12 +31,31 @@ export const router = createBrowserRouter([
 ]);
 
 **/
-export async function action() {
-    console.log("Desde action........")
+export async function action({request}:ActionFunctionArgs) {
+
+    const data = Object.fromEntries(await request.formData())
+    let error = "";
+
+    if(Object.values(data).includes('')){
+        error = "Todos los campos son obligatorios"
+    }
+
+    //El error se encuentra en la funcion action y para tenerlo disponible en nuestro template lo retornamos y usamos el useActionData() para recuperarlo
+
+    if(error.length){
+        return error
+    }
+
+    addProduct(data)
+
     return {}
 }
 
 export const NewProduct = () => {
+    //Recuperamos los errores en caso de haberlos
+    const error = useActionData() as string ;
+    console.log(error)
+
   return (
     <>
       <div className="flex justify-between">
@@ -45,6 +69,8 @@ export const NewProduct = () => {
           Volver a Productos
         </Link>
       </div>
+
+        {error && <ErrorMessage>{error}</ErrorMessage>}
 
       <Form 
         className="mt-10"
